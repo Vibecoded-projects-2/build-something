@@ -13,6 +13,7 @@
     "worker": "NODE_ENV=production node --import tsx server/worker-main.ts",
     "check": "tsc --noEmit",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "build": "vite build"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",

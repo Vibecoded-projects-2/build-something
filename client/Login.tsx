@@ -11,7 +11,13 @@ function loginError(error: unknown): string {
   return "Sign-in isn't available right now. Check that the server is running.";
 }
 
-export function Login({ onSignedIn }: { onSignedIn: () => void }) {
+export function Login({
+  onSignedIn,
+  onViewSample,
+}: {
+  onSignedIn: () => void;
+  onViewSample: () => void;
+}) {
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +70,9 @@ export function Login({ onSignedIn }: { onSignedIn: () => void }) {
         )}
         <button type="submit" className="primary" disabled={busy}>
           {busy ? "Signing in" : "Sign in"}
+        </button>
+        <button type="button" className="link-button" onClick={onViewSample}>
+          View a sample workspace
         </button>
       </form>
     </main>
