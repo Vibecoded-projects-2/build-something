@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password | docker login --username AWS --password-stdin "${ECR_REPOSITORY%%/*}"
+  build:
+    commands:
+      - docker build -t "$ECR_REPOSITORY:$IMAGE_TAG" .
+  post_build:
+    commands:
+      - docker push "$ECR_REPOSITORY:$IMAGE_TAG"
