@@ -30,3 +30,13 @@ Open http://localhost:4310. Local mode runs the worker in the web process and st
 data in embedded PGlite under `.data/postgres`. Do not point two processes at that
 directory. Production runs the web service with `RUN_WORKER=false` and a separate
 worker using `npm run worker`.
+
+A read-only sample workspace is available from the sign-in screen or at `/?demo=1`.
+Its data is illustrative and says nothing about whether integrations are working.
+
+Browser tests expect the app to already be running:
+
+```sh
+npm run dev
+npm run test:e2e
+```

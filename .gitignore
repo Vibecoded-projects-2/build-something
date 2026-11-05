@@ -15,3 +15,7 @@ coverage/
 *.tfstate
 *.tfstate.*
 *.tfplan
+
+# Browser test output
+test-results/
+playwright-report/

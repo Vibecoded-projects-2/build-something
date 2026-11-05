@@ -7,6 +7,7 @@ import { Operations } from "./Operations.tsx";
 import { Overview } from "./Overview.tsx";
 import { PullRequests } from "./PullRequests.tsx";
 import { Repositories } from "./Repositories.tsx";
+import { sampleDashboard, samplePullRequest } from "./sample.ts";
 import { Settings } from "./Settings.tsx";
 import type { Dashboard, DashboardWindow, Session } from "./types.ts";
 
@@ -25,10 +26,10 @@ const NAVIGATION: Array<{ id: ViewId; name: string; icon: ComponentType<{ size?:
   { id: "settings", name: "Settings", icon: SettingsIcon },
 ];
 
-function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
+function Workspace({ sample = false, onSignedOut }: { sample?: boolean; onSignedOut: () => void }) {
   const [view, setView] = useState<ViewId>("overview");
   const [days, setDays] = useState<DashboardWindow>(30);
-  const [data, setData] = useState<Dashboard | null>(null);
+  const [data, setData] = useState<Dashboard | null>(sample ? sampleDashboard : null);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
@@ -42,15 +43,17 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
   }, [days, onSignedOut]);
 
   useEffect(() => {
+    // Sample mode never contacts the live API.
+    if (sample) return;
     void refresh();
     const timer = setInterval(() => {
       if (document.visibilityState === "visible") void refresh();
     }, REFRESH_MS);
     return () => clearInterval(timer);
-  }, [refresh]);
+  }, [refresh, sample]);
 
   async function signOut() {
-    await api.logout();
+    if (!sample) await api.logout();
     onSignedOut();
   }
 
@@ -76,14 +79,14 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
         </nav>
         <button type="button" className="nav-item sign-out" onClick={() => void signOut()}>
           <LogOut size={16} />
-          <span>Sign out</span>
+          <span>{sample ? "Leave sample" : "Sign out"}</span>
         </button>
       </aside>
 
       <main className="content">
         <header className="content-header">
           <h1>{current.name}</h1>
-          {WINDOWED_VIEWS.has(view) && (
+          {WINDOWED_VIEWS.has(view) && !sample && (
             <div className="window-picker" role="group" aria-label="Time period">
               {WINDOWS.map((value) => (
                 <button
@@ -99,6 +102,12 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
           )}
         </header>
 
+        {sample && (
+          <p className="banner" role="note">
+            This is a read-only sample. None of it came from a real repository.
+          </p>
+        )}
+
         {error && (
           <p className="banner" role="status">
             {error}
@@ -110,14 +119,14 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
           <Overview data={data} onOpenSettings={() => setView("settings")} />
         )}
         {data && view === "repositories" && (
-          <Repositories repositories={data.repositories} onChanged={() => void refresh()} />
+          <Repositories repositories={data.repositories} readOnly={sample} onChanged={() => void refresh()} />
         )}
-        {data && view === "pulls" && <PullRequests pullRequests={data.pullRequests} load={api.pullRequest} />}
+        {data && view === "pulls" && <PullRequests pullRequests={data.pullRequests} load={sample ? samplePullRequest : api.pullRequest} />}
         {data && view === "findings" && (
-          <Findings findings={data.findings} onChanged={() => void refresh()} />
+          <Findings findings={data.findings} readOnly={sample} onChanged={() => void refresh()} />
         )}
-        {data && view === "operations" && <Operations data={data} onChanged={() => void refresh()} />}
-        {data && view === "settings" && <Settings data={data} onChanged={() => void refresh()} />}
+        {data && view === "operations" && <Operations data={data} readOnly={sample} onChanged={() => void refresh()} />}
+        {data && view === "settings" && <Settings data={data} readOnly={sample} onChanged={() => void refresh()} />}
       </main>
     </div>
   );
@@ -125,6 +134,12 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
 
 export function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [sample, setSample] = useState(() => new URLSearchParams(location.search).get("demo") === "1");
+
+  const leaveSample = useCallback(() => {
+    history.replaceState(null, "", "/");
+    setSample(false);
+  }, []);
 
   const loadSession = useCallback(async () => {
     try {
@@ -138,7 +153,10 @@ export function App() {
     void loadSession();
   }, [loadSession]);
 
+  if (sample) return <Workspace sample onSignedOut={leaveSample} />;
   if (!session) return null;
-  if (!session.authenticated) return <Login onSignedIn={() => void loadSession()} />;
+  if (!session.authenticated) {
+    return <Login onSignedIn={() => void loadSession()} onViewSample={() => setSample(true)} />;
+  }
   return <Workspace onSignedOut={() => setSession({ authenticated: false })} />;
 }
