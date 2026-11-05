@@ -18,6 +18,7 @@ import {
   SESSION_TTL_SECONDS,
   type Session,
 } from "./auth.ts";
+import { registerApiRoutes } from "./api.ts";
 import type { AppConfig } from "./config.ts";
 import type { Db } from "./db.ts";
 import { registerWebhookRoutes } from "./webhooks.ts";
@@ -31,6 +32,7 @@ declare module "fastify" {
 export interface AppDeps {
   config: AppConfig;
   db: Db;
+  hasGitHubClient?: boolean;
   logger?: boolean;
 }
 
@@ -161,6 +163,7 @@ export async function createApp(deps: AppDeps): Promise<FastifyInstance> {
   });
 
   await registerWebhookRoutes(app, { config, db });
+  await registerApiRoutes(app, { config, db, hasGitHubClient: deps.hasGitHubClient ?? false });
 
   return app;
 }
