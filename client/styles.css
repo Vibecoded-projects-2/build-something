@@ -595,6 +595,103 @@ tbody tr + tr td {
   overflow-wrap: anywhere;
 }
 
+.prose {
+  max-width: 68ch;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.finding-summary {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+button[aria-pressed="true"].secondary {
+  background: var(--wash);
+  font-weight: 700;
+}
+
+.stack {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.stack-large {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.settings {
+  display: grid;
+  gap: 2.25rem;
+  max-width: 44rem;
+}
+
+.settings section > p {
+  margin-top: 0.25rem;
+}
+
+.setting-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 0.875rem;
+}
+
+.setting-row + .setting-row {
+  border-top: 1px solid var(--rule);
+}
+
+.setting-name {
+  font-weight: 700;
+}
+
+.setting-facts {
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.setting-facts div {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.setting-facts dt {
+  color: var(--ink-soft);
+}
+
+.setting-facts dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.plain-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.125rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
 /* Drawer */
 
 .drawer {
@@ -692,6 +789,15 @@ tbody tr + tr td {
 
   .overview-detail {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .filters {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .setting-facts div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 
   .login {

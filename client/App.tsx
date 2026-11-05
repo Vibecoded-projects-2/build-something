@@ -1,14 +1,18 @@
 import { Activity, FolderGit2, GitPullRequest, LayoutDashboard, LogOut, MessageSquareCode, Settings as SettingsIcon } from "lucide-react";
 import { useCallback, useEffect, useState, type ComponentType } from "react";
 import { api, ApiError } from "./api.ts";
+import { Findings } from "./Findings.tsx";
 import { Login } from "./Login.tsx";
+import { Operations } from "./Operations.tsx";
 import { Overview } from "./Overview.tsx";
 import { PullRequests } from "./PullRequests.tsx";
 import { Repositories } from "./Repositories.tsx";
+import { Settings } from "./Settings.tsx";
 import type { Dashboard, DashboardWindow, Session } from "./types.ts";
 
 const REFRESH_MS = 15_000;
 const WINDOWS: DashboardWindow[] = [7, 30, 90];
+const WINDOWED_VIEWS = new Set<string>(["overview", "pulls", "findings", "operations"]);
 
 type ViewId = "overview" | "repositories" | "pulls" | "findings" | "operations" | "settings";
 
@@ -79,18 +83,20 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
       <main className="content">
         <header className="content-header">
           <h1>{current.name}</h1>
-          <div className="window-picker" role="group" aria-label="Time period">
-            {WINDOWS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={value === days}
-                onClick={() => setDays(value)}
-              >
-                {value} days
-              </button>
-            ))}
-          </div>
+          {WINDOWED_VIEWS.has(view) && (
+            <div className="window-picker" role="group" aria-label="Time period">
+              {WINDOWS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={value === days}
+                  onClick={() => setDays(value)}
+                >
+                  {value} days
+                </button>
+              ))}
+            </div>
+          )}
         </header>
 
         {error && (
@@ -107,6 +113,11 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
           <Repositories repositories={data.repositories} onChanged={() => void refresh()} />
         )}
         {data && view === "pulls" && <PullRequests pullRequests={data.pullRequests} load={api.pullRequest} />}
+        {data && view === "findings" && (
+          <Findings findings={data.findings} onChanged={() => void refresh()} />
+        )}
+        {data && view === "operations" && <Operations data={data} onChanged={() => void refresh()} />}
+        {data && view === "settings" && <Settings data={data} onChanged={() => void refresh()} />}
       </main>
     </div>
   );
