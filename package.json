@@ -14,7 +14,8 @@
     "check": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "build": "vite build"
+    "build": "vite build",
+    "setup": "tsx scripts/setup.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.5.0",

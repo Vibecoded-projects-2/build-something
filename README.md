@@ -20,11 +20,16 @@ npm test
 npm run build
 ```
 
-Run locally with a private `.env.local` that sets at least `ADMIN_PASSWORD`:
+Create a private `.env.local` with a generated admin password and webhook secret,
+then start the app:
 
 ```sh
+npm run setup
 npm run dev
 ```
+
+Read the password from `.env.local` in your editor. The setup script does not print
+it, and an existing file is never overwritten.
 
 Open http://localhost:4310. Local mode runs the worker in the web process and stores
 data in embedded PGlite under `.data/postgres`. Do not point two processes at that
@@ -33,6 +38,21 @@ worker using `npm run worker`.
 
 A read-only sample workspace is available from the sign-in screen or at `/?demo=1`.
 Its data is illustrative and says nothing about whether integrations are working.
+
+To verify sign-in without printing credentials, while the app is running:
+
+```sh
+node --import tsx scripts/check-local.ts
+```
+
+To make a paid test of the configured model with synthetic source:
+
+```sh
+node --import tsx scripts/smoke-model.ts
+```
+
+Neither proves GitHub integration. That needs an installed GitHub App, a reachable
+webhook URL, and a real pull request reviewed automatically.
 
 Browser tests expect the app to already be running:
 
