@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState, type ComponentType } from "react";
 import { api, ApiError } from "./api.ts";
 import { Login } from "./Login.tsx";
 import { Overview } from "./Overview.tsx";
+import { PullRequests } from "./PullRequests.tsx";
+import { Repositories } from "./Repositories.tsx";
 import type { Dashboard, DashboardWindow, Session } from "./types.ts";
 
 const REFRESH_MS = 15_000;
@@ -101,6 +103,10 @@ function Workspace({ onSignedOut }: { onSignedOut: () => void }) {
         {data && view === "overview" && (
           <Overview data={data} onOpenSettings={() => setView("settings")} />
         )}
+        {data && view === "repositories" && (
+          <Repositories repositories={data.repositories} onChanged={() => void refresh()} />
+        )}
+        {data && view === "pulls" && <PullRequests pullRequests={data.pullRequests} load={api.pullRequest} />}
       </main>
     </div>
   );
