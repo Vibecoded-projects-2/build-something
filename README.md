@@ -19,3 +19,14 @@ npm run check
 npm test
 npm run build
 ```
+
+Run locally with a private `.env.local` that sets at least `ADMIN_PASSWORD`:
+
+```sh
+npm run dev
+```
+
+Open http://localhost:4310. Local mode runs the worker in the web process and stores
+data in embedded PGlite under `.data/postgres`. Do not point two processes at that
+directory. Production runs the web service with `RUN_WORKER=false` and a separate
+worker using `npm run worker`.
