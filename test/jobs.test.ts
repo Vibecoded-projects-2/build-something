@@ -49,6 +49,15 @@ describe("job queue", () => {
     expect(await claimJob(db)).toBeNull();
   });
 
+  it("never gives one job to two concurrent workers", async () => {
+    for (let index = 0; index < 12; index += 1) await enqueueJob(db, job(`key-${index}`));
+    const claims = await Promise.all(Array.from({ length: 24 }, () => claimJob(db)));
+    const ids = claims.flatMap((claimed) => (claimed ? [claimed.id] : []));
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.length).toBeLessThanOrEqual(12);
+    expect(ids.length).toBeGreaterThan(0);
+  });
+
   it("claims a specific job only when it is eligible", async () => {
     const first = (await enqueueJob(db, job("a")))!;
     const second = (await enqueueJob(db, job("b")))!;

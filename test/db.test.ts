@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createDb, migrate, recordAudit, type Db } from "../server/db.ts";
+import { migrate, recordAudit, type Db } from "../server/db.ts";
+import { testDb } from "./helpers.ts";
 
 describe("database", () => {
   let db: Db;
 
   beforeEach(async () => {
-    db = await createDb({});
-    await migrate(db, "acme");
+    db = await testDb();
   });
 
   afterEach(async () => {
@@ -20,6 +20,12 @@ describe("database", () => {
 
   it("can be applied repeatedly", async () => {
     await migrate(db, "acme");
+    const rows = await db.query("SELECT count(*)::int AS count FROM workspaces");
+    expect(rows[0]?.count).toBe(1);
+  });
+
+  it("serializes concurrent startups", async () => {
+    await Promise.all([migrate(db, "acme"), migrate(db, "acme"), migrate(db, "acme")]);
     const rows = await db.query("SELECT count(*)::int AS count FROM workspaces");
     expect(rows[0]?.count).toBe(1);
   });
