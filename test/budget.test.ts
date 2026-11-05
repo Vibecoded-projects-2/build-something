@@ -75,6 +75,16 @@ describe("monthly budget", () => {
     expect((await run("run-2")).reserved).toBe(0);
   });
 
+  it("does not overspend when reservations race", async () => {
+    await seedRun(db, "run-3");
+    await seedRun(db, "run-4");
+    const results = await Promise.allSettled(
+      ["run-1", "run-2", "run-3", "run-4"].map((id) => reserve(id, 4)),
+    );
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(2);
+    expect(await month()).toEqual({ spent: 0, reserved: 8 });
+  });
+
   it("does not reserve twice for a retried run", async () => {
     await reserve("run-1", 6);
     await reserve("run-1", 6);

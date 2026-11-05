@@ -2,7 +2,8 @@ import type { FastifyInstance } from "fastify";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../server/app.ts";
 import { parseConfig } from "../server/config.ts";
-import { createDb, migrate, type Db } from "../server/db.ts";
+import type { Db } from "../server/db.ts";
+import { testDb } from "./helpers.ts";
 
 const password = "correct-horse-battery-staple";
 const config = parseConfig({ ADMIN_PASSWORD: password, TARGET_ACCOUNT: "acme" });
@@ -12,8 +13,7 @@ describe("administrator session", () => {
   let app: FastifyInstance;
 
   beforeEach(async () => {
-    db = await createDb({});
-    await migrate(db, "acme");
+    db = await testDb();
     app = await createApp({ config, db });
   });
 
