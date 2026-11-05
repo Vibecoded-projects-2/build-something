@@ -60,3 +60,16 @@ Browser tests expect the app to already be running:
 npm run dev
 npm run test:e2e
 ```
+
+## Deploy
+
+See [docs/deployment.md](docs/deployment.md). Nothing has been deployed from this
+repository, and the infrastructure code has not been validated yet.
+
+## Known limits
+
+- One administrator and one target account. No multi-tenant onboarding, roles, or SSO.
+- No whole-codebase analysis, and findings anchor to added lines, so deletion-only
+  defects can be missed.
+- Redaction and duplicate detection are pattern-based.
+- The budget is an internal estimate, not a provider-enforced cap.
