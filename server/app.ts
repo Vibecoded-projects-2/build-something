@@ -20,6 +20,7 @@ import {
 } from "./auth.ts";
 import type { AppConfig } from "./config.ts";
 import type { Db } from "./db.ts";
+import { registerWebhookRoutes } from "./webhooks.ts";
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -158,6 +159,8 @@ export async function createApp(deps: AppDeps): Promise<FastifyInstance> {
     reply.clearCookie(SESSION_COOKIE, { path: "/" });
     return { ok: true };
   });
+
+  await registerWebhookRoutes(app, { config, db });
 
   return app;
 }
