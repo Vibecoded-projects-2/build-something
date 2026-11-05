@@ -7,5 +7,7 @@ export default defineConfig({
   build: {
     outDir: "../dist/client",
     emptyOutDir: true,
+    // The production CSP has no data: font source, so assets stay as files.
+    assetsInlineLimit: 0,
   },
 });
