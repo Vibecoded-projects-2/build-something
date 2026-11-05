@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+
+# Private local state. Never commit these.
+.env
+.env.*
+!.env.example
+.data/
+.deployment/
+*.pem
+
+# Terraform state and plans
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan

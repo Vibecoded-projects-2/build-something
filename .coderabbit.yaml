@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+reviews:
+  auto_review:
+    enabled: true
+    drafts: true
+    # This project ships as a stack of PRs, each based on the one before it.
+    # Without this, only PRs that target the default branch are reviewed.
+    base_branches:
+      - ".*"
