@@ -3,6 +3,7 @@ import { createDb, migrate, type Db } from "./db.ts";
 import { createHandlers, type EngineDeps } from "./engine.ts";
 import { createGateway } from "./github.ts";
 import { createReviewModel } from "./reviewer.ts";
+import { hydrateSecrets } from "./secrets.ts";
 import { enqueuePeriodicSync } from "./service.ts";
 import { SqsWakeups } from "./sqs.ts";
 import { Worker } from "./worker.ts";
@@ -25,6 +26,7 @@ export interface Runtime {
 }
 
 export async function createRuntime(): Promise<Runtime> {
+  await hydrateSecrets();
   const config = loadConfig();
   const db = await createDb({
     databaseUrl: config.databaseUrl,

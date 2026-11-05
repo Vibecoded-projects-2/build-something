@@ -1,0 +1,16 @@
+.git
+.github
+.data
+.deployment
+.env
+.env.*
+.terraform
+*.tfstate
+*.tfstate.*
+coverage
+dist
+infra
+node_modules
+test
+test-results
+playwright-report
